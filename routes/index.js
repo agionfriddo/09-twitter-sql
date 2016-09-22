@@ -56,7 +56,8 @@ module.exports = function makeRouterWithSockets (io) {
     var countQuery = "SELECT COUNT(*) FROM Users WHERE name = '" + req.body.name + "'";
 
     client.query(countQuery, function(err, result) {
-      if(result.rows[0].count === 0) {
+      console.log(result.rows[0].count);
+      if(result.rows[0].count < 1) {
         client.query("INSERT INTO Users (name, pictureUrl) VALUES ($1, $2)",
           [req.body.name, "none"],
           function(err, result){
@@ -69,7 +70,7 @@ module.exports = function makeRouterWithSockets (io) {
               res.redirect('/');
             });
         });
-      } else{
+      } else {
         client.query("INSERT INTO Tweets (userId, content) VALUES ((SELECT id from Users Where name =$1),$2)",
           [req.body.name, req.body.content],
           function(err, result) {
